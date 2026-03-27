@@ -17,6 +17,14 @@ CBC Global Hackathon 2025 — Biology & Physical Health Track
 - Ensar Alihakaj
 - Nazar Khokhla
 
+## Run Locally
+
+```bash
+npm install
+npx convex dev   # start Convex backend
+npm run dev      # start SvelteKit dev server
+```
+
 ## Live Demo
 
 https://claude-hackathon-phi.vercel.app/app
