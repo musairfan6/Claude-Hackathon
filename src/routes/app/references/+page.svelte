@@ -83,13 +83,15 @@
 						query over WebSocket.
 					</p>
 					<p>
-						The Clerk JWT is passed automatically via <code class="rounded bg-brand-light px-1 py-0.5"
-							>ConvexWrapper</code
+						The Clerk JWT is passed automatically via <code
+							class="rounded bg-brand-light px-1 py-0.5">ConvexWrapper</code
 						>
 						&rarr; <code class="rounded bg-brand-light px-1 py-0.5">convex.setAuth()</code>.
 					</p>
 					<p>
-						The query handler uses <code class="rounded bg-brand-light px-1 py-0.5">authedQuery</code>
+						The query handler uses <code class="rounded bg-brand-light px-1 py-0.5"
+							>authedQuery</code
+						>
 						which calls
 						<code class="rounded bg-brand-light px-1 py-0.5">ctx.auth.getUserIdentity()</code> and throws
 						if null.
@@ -189,18 +191,20 @@
 						Uses an Effect generator to call <code class="rounded bg-brand-light px-1 py-0.5"
 							>ConvexPrivateService.query()</code
 						>
-						which uses <code class="rounded bg-brand-light px-1 py-0.5">ConvexHttpClient</code> + API key
-						auth.
+						which uses <code class="rounded bg-brand-light px-1 py-0.5">ConvexHttpClient</code> + API
+						key auth.
 					</p>
 					<p>
 						The private Convex function validates <code class="rounded bg-brand-light px-1 py-0.5"
 							>apiKey</code
 						>
-						against <code class="rounded bg-brand-light px-1 py-0.5">CONVEX_PRIVATE_BRIDGE_KEY</code> env
-						var &mdash; never exposed to the client.
+						against
+						<code class="rounded bg-brand-light px-1 py-0.5">CONVEX_PRIVATE_BRIDGE_KEY</code> env var
+						&mdash; never exposed to the client.
 					</p>
 					<p>
-						Errors are caught by <code class="rounded bg-brand-light px-1 py-0.5">effectRunner</code>
+						Errors are caught by <code class="rounded bg-brand-light px-1 py-0.5">effectRunner</code
+						>
 						and mapped to SvelteKit <code class="rounded bg-brand-light px-1 py-0.5">error()</code> responses
 						with proper status codes.
 					</p>
@@ -245,8 +249,8 @@
 				>
 				<div class="mt-2 space-y-1 text-xs text-muted">
 					<p>
-						Uses <code class="rounded bg-brand-light px-1 py-0.5">getRequestEvent()</code> to get the
-						current request, then passes it to
+						Uses <code class="rounded bg-brand-light px-1 py-0.5">getRequestEvent()</code> to get
+						the current request, then passes it to
 						<code class="rounded bg-brand-light px-1 py-0.5">ClerkService.validateAuth()</code>.
 					</p>
 					<p>
@@ -290,8 +294,8 @@
 						<code class="rounded bg-brand-light px-1 py-0.5">GenericError</code>.
 					</p>
 					<p class="mt-1">
-						<code class="rounded bg-brand-light px-1 py-0.5">effectRunner</code> catches all failures,
-						logs them, and maps to SvelteKit
+						<code class="rounded bg-brand-light px-1 py-0.5">effectRunner</code> catches all
+						failures, logs them, and maps to SvelteKit
 						<code class="rounded bg-brand-light px-1 py-0.5">error(status, body)</code>:
 					</p>
 					<ul class="mt-1 list-inside list-disc space-y-0.5">
@@ -312,8 +316,8 @@
 					<p class="mt-1">
 						<code class="rounded bg-brand-light px-1 py-0.5">PageError</code> parses
 						<code class="rounded bg-brand-light px-1 py-0.5">isHttpError()</code>
-						into the <code class="rounded bg-brand-light px-1 py-0.5">App.Error</code> shape: message, kind,
-						timestamp, traceId.
+						into the <code class="rounded bg-brand-light px-1 py-0.5">App.Error</code> shape: message,
+						kind, timestamp, traceId.
 					</p>
 					<p class="mt-1">
 						The <code class="rounded bg-brand-light px-1 py-0.5">reset</code> callback lets users retry

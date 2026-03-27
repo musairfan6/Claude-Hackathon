@@ -14,6 +14,7 @@ Project guidelines:
 - run `bun run lint` to check for linting errors, `bun run format`, and `bun run check` to check for errors after making changes
 
 <!-- VERCEL BEST PRACTICES START -->
+
 ## Best practices for developing on Vercel
 
 These defaults are optimized for AI coding agents (and humans) working on apps that deploy to Vercel.

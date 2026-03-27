@@ -225,9 +225,7 @@
 				<section class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-border">
 					<div class="flex items-start justify-between gap-4">
 						<div>
-							<p class="text-xs font-semibold tracking-[0.24em] text-muted uppercase">
-								Insight
-							</p>
+							<p class="text-xs font-semibold tracking-[0.24em] text-muted uppercase">Insight</p>
 							<h3 class="mt-2 text-2xl font-semibold tracking-tight text-foreground">
 								{insightCoverage.data
 									? `${formatLongDate(insightCoverage.data.startDate)} to ${formatLongDate(insightCoverage.data.endDate)}`

@@ -7,6 +7,7 @@
 		type ParsedActivityRow,
 		type ParsedVitalsRow
 	} from '$lib/features/wearableImport';
+	import { getClerkContext } from '$lib/stores/clerk.svelte';
 	import { api } from '../../convex/_generated/api';
 	import { useConvexClient, useQuery } from 'convex-svelte';
 
@@ -25,17 +26,28 @@
 	});
 
 	const { children } = $props();
+	const clerkContext = getClerkContext();
 	const client = useConvexClient();
-	const profile = useQuery(api.authed.users.getCurrentUser, {});
+	const profile = useQuery(api.authed.users.getCurrentUser, () =>
+		clerkContext.currentUser ? {} : 'skip'
+	);
 
 	let vitalsUpload = $state<FileUploadState<ParsedVitalsRow>>(createFileUploadState());
 	let activityUpload = $state<FileUploadState<ParsedActivityRow>>(createFileUploadState());
 	let importBusy = $state(false);
 	let importErrorMessage = $state<string | null>(null);
 
-	const shouldShowImportModal = $derived.by(
-		() => profile.data === undefined || profile.data?.wearableImportCompletedAt === undefined
-	);
+	const shouldShowImportModal = $derived.by(() => {
+		if (!clerkContext.currentUser) {
+			return false;
+		}
+
+		if (profile.isLoading) {
+			return false;
+		}
+
+		return profile.data?.wearableImportCompletedAt === undefined;
+	});
 
 	const canSubmitImport = $derived.by(() => vitalsUpload.ready && activityUpload.ready);
 
@@ -93,6 +105,11 @@
 
 	async function submitWearableImport() {
 		importErrorMessage = null;
+
+		if (!clerkContext.currentUser) {
+			importErrorMessage = 'Sign in before importing wearable data.';
+			return;
+		}
 
 		if (!canSubmitImport) {
 			importErrorMessage = 'Upload both CSV files before importing.';

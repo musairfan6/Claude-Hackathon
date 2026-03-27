@@ -156,9 +156,7 @@
 											{feature.title}
 										</h3>
 									</div>
-									<span
-										class="rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted"
-									>
+									<span class="rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted">
 										{feature.status}
 									</span>
 								</div>

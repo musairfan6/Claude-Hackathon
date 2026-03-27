@@ -60,7 +60,8 @@
 							<code class="rounded bg-brand-light px-1.5 py-0.5 text-xs">vitals.csv</code> and
 							<code class="rounded bg-brand-light px-1.5 py-0.5 text-xs">activity.csv</code> files.
 						{:else}
-							Upload <code class="rounded bg-brand-light px-1.5 py-0.5 text-xs">vitals.csv</code> and
+							Upload <code class="rounded bg-brand-light px-1.5 py-0.5 text-xs">vitals.csv</code>
+							and
 							<code class="rounded bg-brand-light px-1.5 py-0.5 text-xs">activity.csv</code> once to unlock
 							Health Logs and Daily Journal for your profile.
 						{/if}
@@ -88,9 +89,7 @@
 								Ready
 							</span>
 						{:else}
-							<span
-								class="rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-muted"
-							>
+							<span class="rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-muted">
 								Required
 							</span>
 						{/if}
@@ -124,9 +123,7 @@
 								Ready
 							</span>
 						{:else}
-							<span
-								class="rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-muted"
-							>
+							<span class="rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-muted">
 								Required
 							</span>
 						{/if}
