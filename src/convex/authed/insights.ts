@@ -114,7 +114,7 @@ export const requestInsight = authedAction({
 				'anthropic-version': '2023-06-01'
 			},
 			body: JSON.stringify({
-				model: process.env.CLAUDE_MODEL ?? 'claude-3-5-haiku-latest',
+				model: process.env.CLAUDE_MODEL ?? 'claude-sonnet-4-5',
 				max_tokens: 700,
 				messages: [
 					{

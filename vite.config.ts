@@ -20,7 +20,10 @@ const getEnvValue = (loadedEnv: Record<string, string>, key: string) =>
 const LOCAL_CONVEX_ENV_KEYS = [
 	'CONVEX_PRIVATE_BRIDGE_KEY',
 	'CLERK_SECRET_KEY',
-	'CLERK_JWT_ISSUER_DOMAIN'
+	'CLERK_JWT_ISSUER_DOMAIN',
+	'ANTHROPIC_API_KEY',
+	'CLAUDE_API_KEY',
+	'CLAUDE_MODEL'
 ] as const;
 
 const getLocalConvexEnvVars = (loadedEnv: Record<string, string>) => {
