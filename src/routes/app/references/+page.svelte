@@ -23,14 +23,8 @@
 		mutationLoading = true;
 		mutationResult = null;
 		try {
-			const id = await client.mutation(api.authed.conferences.create, {
-				name: `Test Conf ${Date.now()}`,
-				location: 'Localhost',
-				startDate: Date.now(),
-				endDate: Date.now() + 86400000,
-				description: 'Created from references page'
-			});
-			mutationResult = `Created conference: ${id}`;
+			await client.mutation(api.authed.users.getOrCreateUser, {});
+			mutationResult = 'Called getOrCreateUser successfully';
 		} catch (err) {
 			mutationResult = `Error: ${err instanceof Error ? err.message : String(err)}`;
 		} finally {
@@ -121,7 +115,7 @@
 					disabled={mutationLoading}
 					class="rounded-md bg-stone-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-stone-800 disabled:opacity-50"
 				>
-					{mutationLoading ? 'Creating...' : 'Create Test Conference'}
+					{mutationLoading ? 'Calling...' : 'Call getOrCreateUser'}
 				</button>
 				{#if mutationResult}
 					<p class="text-sm text-stone-500">{mutationResult}</p>

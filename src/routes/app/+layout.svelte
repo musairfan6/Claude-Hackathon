@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Conference Tracker</title>
+	<title>Health Jarvis</title>
 </svelte:head>
 
 <ClerkWrapper>
