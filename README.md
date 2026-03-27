@@ -20,9 +20,9 @@ CBC Global Hackathon 2025 — Biology & Physical Health Track
 ## Run Locally
 
 ```bash
-npm install
-npx convex dev   # start Convex backend
-npm run dev      # start SvelteKit dev server
+bun install
+bunx convex dev   # start Convex backend
+bun run dev       # start SvelteKit dev server
 ```
 
 ## Live Demo
