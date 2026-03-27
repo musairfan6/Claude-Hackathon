@@ -1,5 +1,11 @@
 import { v } from 'convex/values';
-import { authedMutation, authedQuery, definedPatch, requireUserByClerkId } from './helpers';
+import {
+	authedMutation,
+	authedQuery,
+	definedPatch,
+	getUserByClerkId,
+	getOrCreateUserByIdentity
+} from './helpers';
 
 /**
  * Upserts a journal entry for a given date. Idempotent by userId + date.
@@ -13,7 +19,7 @@ export const submitJournalEntry = authedMutation({
 		notes: v.optional(v.string())
 	},
 	handler: async (ctx, args) => {
-		const user = await requireUserByClerkId(ctx.db, ctx.identity.subject);
+		const user = await getOrCreateUserByIdentity(ctx.db, ctx.identity);
 		const existingEntry = await ctx.db
 			.query('journalEntries')
 			.withIndex('by_user_and_date', (q) => q.eq('userId', user._id).eq('date', args.date))
@@ -50,7 +56,11 @@ export const getJournalHistory = authedQuery({
 		limit: v.optional(v.number())
 	},
 	handler: async (ctx, args) => {
-		const user = await requireUserByClerkId(ctx.db, ctx.identity.subject);
+		const user = await getUserByClerkId(ctx.db, ctx.identity.subject);
+
+		if (user === null) {
+			return [];
+		}
 
 		return ctx.db
 			.query('journalEntries')

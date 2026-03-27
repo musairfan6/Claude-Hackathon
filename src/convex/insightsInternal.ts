@@ -1,10 +1,11 @@
 import { v } from 'convex/values';
+import { getTrailingDateRange, isDateInRange } from './lib/dateRange';
 import { internalMutation, internalQuery } from './_generated/server';
 
-export const getInsightGenerationContext = internalQuery({
+export const getWeeklyInsightGenerationContext = internalQuery({
 	args: {
 		clerkId: v.string(),
-		date: v.string()
+		endDate: v.string()
 	},
 	handler: async (ctx, args) => {
 		const user = await ctx.db
@@ -16,34 +17,53 @@ export const getInsightGenerationContext = internalQuery({
 			throw new Error('User profile not found');
 		}
 
-		const [healthLog, journalEntry, existingInsight] = await Promise.all([
+		const { startDate, endDate, dates } = getTrailingDateRange(args.endDate, 7);
+		const [healthLogs, journalEntries, existingInsight] = await Promise.all([
 			ctx.db
 				.query('healthLogs')
-				.withIndex('by_user_and_date', (q) => q.eq('userId', user._id).eq('date', args.date))
-				.unique(),
+				.withIndex('by_user_id', (q) => q.eq('userId', user._id))
+				.collect(),
 			ctx.db
 				.query('journalEntries')
-				.withIndex('by_user_and_date', (q) => q.eq('userId', user._id).eq('date', args.date))
-				.unique(),
+				.withIndex('by_user_id', (q) => q.eq('userId', user._id))
+				.collect(),
 			ctx.db
 				.query('insights')
-				.withIndex('by_user_and_date', (q) => q.eq('userId', user._id).eq('date', args.date))
+				.withIndex('by_user_and_end_date', (q) => q.eq('userId', user._id).eq('endDate', endDate))
 				.unique()
 		]);
 
+		const weekHealthLogs = healthLogs
+			.filter((entry) => isDateInRange(entry.date, startDate, endDate))
+			.sort((left, right) => left.date.localeCompare(right.date));
+		const weekJournalEntries = journalEntries
+			.filter((entry) => isDateInRange(entry.date, startDate, endDate))
+			.sort((left, right) => left.date.localeCompare(right.date));
+
 		return {
 			user,
-			healthLog,
-			journalEntry,
+			week: {
+				startDate,
+				endDate,
+				dates
+			},
+			healthLogs: weekHealthLogs,
+			journalEntries: weekJournalEntries,
+			coverage: {
+				healthLogDays: weekHealthLogs.length,
+				journalEntryDays: weekJournalEntries.length,
+				hasAnyData: weekHealthLogs.length > 0 || weekJournalEntries.length > 0
+			},
 			existingInsight
 		};
 	}
 });
 
-export const saveInsightForUser = internalMutation({
+export const saveWeeklyInsightForUser = internalMutation({
 	args: {
 		clerkId: v.string(),
-		date: v.string(),
+		startDate: v.string(),
+		endDate: v.string(),
 		summary: v.string(),
 		body: v.string(),
 		recommendations: v.array(v.string()),
@@ -61,10 +81,13 @@ export const saveInsightForUser = internalMutation({
 
 		const existingInsight = await ctx.db
 			.query('insights')
-			.withIndex('by_user_and_date', (q) => q.eq('userId', user._id).eq('date', args.date))
+			.withIndex('by_user_and_end_date', (q) =>
+				q.eq('userId', user._id).eq('endDate', args.endDate)
+			)
 			.unique();
 		const payload = {
-			date: args.date,
+			startDate: args.startDate,
+			endDate: args.endDate,
 			summary: args.summary,
 			body: args.body,
 			recommendations: args.recommendations,

@@ -1,2 +1,22 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
+
+@theme {
+	/* Brand core */
+	--color-brand: #0F5C4C;
+	--color-brand-dark: #0A3D34;
+	--color-brand-accent: #C7F000;
+	--color-brand-light: #E8F5F1;
+
+	/* Neutral UI */
+	--color-surface: #F5F5F5;
+	--color-border: #D9D9D9;
+	--color-muted: #6B6B6B;
+	--color-foreground: #1A1A1A;
+
+	/* Status */
+	--color-success: #22C55E;
+	--color-warning: #FACC15;
+	--color-danger: #EF4444;
+	--color-info: #3B82F6;
+}

@@ -63,6 +63,39 @@ export async function requireUserByClerkId(db: UserStore, clerkId: string): Prom
 	return user;
 }
 
+export async function getOrCreateUserByIdentity(
+	db: DatabaseWriter,
+	identity: {
+		subject: string;
+		name?: string | null;
+		email?: string | null;
+	}
+): Promise<Doc<'users'>> {
+	const existingUser = await getUserByClerkId(db, identity.subject);
+
+	if (existingUser !== null) {
+		return existingUser;
+	}
+
+	const now = Date.now();
+	const userId = await db.insert('users', {
+		clerkId: identity.subject,
+		name: identity.name ?? identity.email ?? 'Anonymous User',
+		goals: [],
+		injuries: [],
+		onboardedAt: now,
+		updatedAt: now
+	});
+
+	const createdUser = await db.get(userId);
+
+	if (createdUser === null) {
+		throw new Error('User profile could not be created');
+	}
+
+	return createdUser;
+}
+
 export function definedPatch<T extends Record<string, unknown>>(values: T): Partial<T> {
 	return Object.fromEntries(
 		Object.entries(values).filter(([, value]) => value !== undefined)

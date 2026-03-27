@@ -1,5 +1,5 @@
 import { v } from 'convex/values';
-import { authedMutation, definedPatch, getUserByClerkId } from './helpers';
+import { authedMutation, authedQuery, definedPatch, getUserByClerkId } from './helpers';
 
 /**
  * Returns the current user's profile, creating it if it doesn't exist yet.
@@ -27,6 +27,13 @@ export const getOrCreateUser = authedMutation({
 		});
 
 		return ctx.db.get(userId);
+	}
+});
+
+export const getCurrentUser = authedQuery({
+	args: {},
+	handler: async (ctx) => {
+		return getUserByClerkId(ctx.db, ctx.identity.subject);
 	}
 });
 

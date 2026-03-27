@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AppShell from '$lib/components/AppShell.svelte';
 	import ClerkWrapper from '$lib/wrappers/ClerkWrapper.svelte';
 	import ConvexWrapper from '$lib/wrappers/ConvexWrapper.svelte';
 
@@ -11,6 +12,8 @@
 
 <ClerkWrapper>
 	<ConvexWrapper>
-		{@render children()}
+		<AppShell>
+			{@render children()}
+		</AppShell>
 	</ConvexWrapper>
 </ClerkWrapper>

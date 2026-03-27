@@ -1,5 +1,23 @@
 import { v } from 'convex/values';
-import { authedMutation, authedQuery, definedPatch, requireUserByClerkId } from './helpers';
+import {
+	authedMutation,
+	authedQuery,
+	definedPatch,
+	getUserByClerkId,
+	getOrCreateUserByIdentity
+} from './helpers';
+
+const wearableImportRow = v.object({
+	date: v.string(),
+	hrv: v.optional(v.number()),
+	restingHr: v.optional(v.number()),
+	steps: v.optional(v.number()),
+	activeCalories: v.optional(v.number()),
+	exerciseMinutes: v.optional(v.number()),
+	source: v.optional(v.string())
+});
+
+const WEARABLE_IMPORT_ORIGIN = 'wearable_csv';
 
 /**
  * Upserts a health log for a given date. Idempotent by userId + date.
@@ -21,7 +39,7 @@ export const submitHealthLog = authedMutation({
 		source: v.optional(v.string())
 	},
 	handler: async (ctx, args) => {
-		const user = await requireUserByClerkId(ctx.db, ctx.identity.subject);
+		const user = await getOrCreateUserByIdentity(ctx.db, ctx.identity);
 		const existingLog = await ctx.db
 			.query('healthLogs')
 			.withIndex('by_user_and_date', (q) => q.eq('userId', user._id).eq('date', args.date))
@@ -64,12 +82,91 @@ export const getHealthHistory = authedQuery({
 		limit: v.optional(v.number())
 	},
 	handler: async (ctx, args) => {
-		const user = await requireUserByClerkId(ctx.db, ctx.identity.subject);
+		const user = await getUserByClerkId(ctx.db, ctx.identity.subject);
+
+		if (user === null) {
+			return [];
+		}
 
 		return ctx.db
 			.query('healthLogs')
 			.withIndex('by_user_id', (q) => q.eq('userId', user._id))
 			.order('desc')
 			.take(args.limit ?? 30);
+	}
+});
+
+export const importWearableData = authedMutation({
+	args: {
+		rows: v.array(wearableImportRow),
+		source: v.string()
+	},
+	handler: async (ctx, args) => {
+		const user = await getOrCreateUserByIdentity(ctx.db, ctx.identity);
+
+		if (args.rows.length === 0) {
+			throw new Error('No wearable rows provided');
+		}
+
+		const sortedRows = [...args.rows].sort((left, right) => left.date.localeCompare(right.date));
+		const importedDates = new Set(sortedRows.map((row) => row.date));
+		const existingLogs = await ctx.db
+			.query('healthLogs')
+			.withIndex('by_user_id', (q) => q.eq('userId', user._id))
+			.collect();
+
+		for (const row of sortedRows) {
+			const existingLog = existingLogs.find((entry) => entry.date === row.date) ?? null;
+
+			const payload = definedPatch({
+				date: row.date,
+				hrv: row.hrv,
+				restingHr: row.restingHr,
+				steps: row.steps,
+				activeCalories: row.activeCalories,
+				exerciseMinutes: row.exerciseMinutes,
+				source: row.source ?? args.source,
+				importOrigin: WEARABLE_IMPORT_ORIGIN
+			});
+
+			if (existingLog !== null) {
+				await ctx.db.patch(existingLog._id, payload);
+				continue;
+			}
+
+			await ctx.db.insert('healthLogs', {
+				userId: user._id,
+				date: row.date,
+				createdAt: Date.now(),
+				...payload
+			});
+		}
+
+		for (const existingLog of existingLogs) {
+			if (
+				existingLog.importOrigin === WEARABLE_IMPORT_ORIGIN &&
+				!importedDates.has(existingLog.date)
+			) {
+				await ctx.db.delete(existingLog._id);
+			}
+		}
+
+		await ctx.db.patch(user._id, {
+			wearableImportCompletedAt: Date.now(),
+			wearableImportSource: args.source,
+			wearableImportDateRange: {
+				start: sortedRows[0].date,
+				end: sortedRows[sortedRows.length - 1].date
+			},
+			updatedAt: Date.now()
+		});
+
+		return {
+			importedCount: sortedRows.length,
+			dateRange: {
+				start: sortedRows[0].date,
+				end: sortedRows[sortedRows.length - 1].date
+			}
+		};
 	}
 });

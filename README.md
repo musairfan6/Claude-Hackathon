@@ -2,7 +2,7 @@
 
 # [Project Name] — CBC Global Hackathon 2025
 
-> *A short one-line description of what your project does and who it helps.*
+> _A short one-line description of what your project does and who it helps._
 
 ---
 
