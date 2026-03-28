@@ -23,3 +23,10 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Python
+__pycache__/
+*.pyc
+
+# Claude local settings
+.claude/settings.local.json

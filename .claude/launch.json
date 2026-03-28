@@ -1,0 +1,28 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "SvelteKit (local Convex)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    },
+    {
+      "name": "SvelteKit (hosted Convex)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:hosted"],
+      "port": 5173
+    },
+    {
+      "name": "Convex Dashboard",
+      "runtimeExecutable": "docker",
+      "runtimeArgs": [
+        "run", "--rm",
+        "-p", "6791:6791",
+        "-e", "NEXT_PUBLIC_DEPLOYMENT_URL=http://127.0.0.1:3210",
+        "ghcr.io/get-convex/convex-dashboard:latest"
+      ],
+      "port": 6791
+    }
+  ]
+}
